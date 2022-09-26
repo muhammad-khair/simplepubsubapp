@@ -1,78 +1,69 @@
 services:
     zookeeper1:
-        image: digitalwonderland/zookeeper
+        image: zookeeper:latest
         container_name: zookeeper1
         environment:
-            - ZOOKEEPER_SERVER_1=${ZOOKEEPER1_HOST}
-            - ZOOKEEPER_SERVER_2=${ZOOKEEPER2_HOST}
-            - ZOOKEEPER_SERVER_3=${ZOOKEEPER3_HOST}
-            - ZOOKEEPER_CLIENT_PORT=2181
-            - ZOOKEEPER_ID=1
+            - ZOO_SERVERS=server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
+            - ZOO_MY_ID=1
         ports:
             - 2181:2181
-            - 2888:2888
-            - 3888:3888
 
     zookeeper2:
-        image: digitalwonderland/zookeeper
+        image: zookeeper:latest
         container_name: zookeeper2
         environment:
-            - ZOOKEEPER_SERVER_1=${ZOOKEEPER1_HOST}
-            - ZOOKEEPER_SERVER_2=${ZOOKEEPER2_HOST}
-            - ZOOKEEPER_SERVER_3=${ZOOKEEPER3_HOST}
-            - ZOOKEEPER_CLIENT_PORT=2181
-            - ZOOKEEPER_ID=2
+            - ZOO_SERVERS=server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
+            - ZOO_MY_ID=2
         ports:
-            - 2181:2181
-            - 2888:2888
-            - 3888:3888
+            - 2182:2181
 
     zookeeper3:
-        image: digitalwonderland/zookeeper
+        image: zookeeper:latest
         container_name: zookeeper3
         environment:
-            - ZOOKEEPER_SERVER_1=${ZOOKEEPER1_HOST}
-            - ZOOKEEPER_SERVER_2=${ZOOKEEPER2_HOST}
-            - ZOOKEEPER_SERVER_3=${ZOOKEEPER3_HOST}
-            - ZOOKEEPER_CLIENT_PORT=2181
-            - ZOOKEEPER_ID=3
+            - ZOO_SERVERS=server.1=zookeeper1:2888:3888;2181 server.2=zookeeper2:2888:3888;2181 server.3=zookeeper3:2888:3888;2181
+            - ZOO_MY_ID=3
         ports:
-            - 2181:2181
-            - 2888:2888
-            - 3888:3888
+            - 2183:2181
 
     kafka1:
         image: wurstmeister/kafka
         container_name: kafka1
         environment:
-            - KAFKA_ADVERTISED_PORT=9092
-            - KAFKA_ZOOKEEPER_CONNECT=${ZOOKEEPER1_HOST}:2181,${ZOOKEEPER2_HOST}:2181,${ZOOKEEPER3_HOST}:2181
-            - KAFKA_LOG_RETENTION_HOURS=4
-            - KAFKA_LOG_RETENTION_BYTES=1000000000
-            - KAFKA_ADVERTISED_HOST_NAME=${KAFKA1_HOST}
+            - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+            - KAFKA_ADVERTISED_HOST_NAME=kafka1
+            - KAFKA_BROKER_ID=1
         ports:
-            - 9092:9092
+            - 9092
+        depends_on:
+            - zookeeper1
+            - zookeeper2
+            - zookeeper3
 
     kafka2:
         image: wurstmeister/kafka
         container_name: kafka2
         environment:
-            - KAFKA_ADVERTISED_PORT=9092
-            - KAFKA_ZOOKEEPER_CONNECT=${ZOOKEEPER1_HOST}:2181,${ZOOKEEPER2_HOST}:2181,${ZOOKEEPER3_HOST}:2181
-            - KAFKA_LOG_RETENTION_HOURS=4
-            - KAFKA_LOG_RETENTION_BYTES=1000000000
-            - KAFKA_ADVERTISED_HOST_NAME=${KAFKA2_HOST}
+            - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+            - KAFKA_ADVERTISED_HOST_NAME=kafka2
+            - KAFKA_BROKER_ID=2
         ports:
-            - 9092:9092
+            - 9092
+        depends_on:
+            - zookeeper1
+            - zookeeper2
+            - zookeeper3
 
     kafka3:
         image: wurstmeister/kafka
         container_name: kafka3
         environment:
-            - KAFKA_ADVERTISED_PORT=9092
-            - KAFKA_ZOOKEEPER_CONNECT=${ZOOKEEPER1_HOST}:2181,${ZOOKEEPER2_HOST}:2181,${ZOOKEEPER3_HOST}:2181
-            - KAFKA_LOG_RETENTION_HOURS=4
-            - KAFKA_LOG_RETENTION_BYTES=1000000000
-            - KAFKA_ADVERTISED_HOST_NAME=${KAFKA3_HOST}
+            - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+            - KAFKA_ADVERTISED_HOST_NAME=kafka3
+            - KAFKA_BROKER_ID=3
         ports:
-            - 9092:9092
+            - 9092
+        depends_on:
+            - zookeeper1
+            - zookeeper2
+            - zookeeper3
